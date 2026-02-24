@@ -10,7 +10,7 @@
     <div class="container">
         <header>
             <h1>Idra</h1>
-            <p class="subtitle">Background Service Manager</p>
+            <p class="subtitle">AI Agent Fleet Orchestrator</p>
         </header>
 
         <section id="status-section" class="card">
@@ -32,6 +32,41 @@
                     <span class="label">Port</span>
                     <span id="port" class="value">—</span>
                 </div>
+            </div>
+        </section>
+
+        <section id="agents-section" class="card">
+            <h2>Agents</h2>
+            <div id="agents-list" class="agents-list">
+                <p class="hint">Loading agents...</p>
+            </div>
+        </section>
+
+        <section id="task-section" class="card">
+            <h2>Run Task</h2>
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="task-agent">Agent</label>
+                    <select id="task-agent">
+                        <option value="">Select an agent...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="task-skill">Skill</label>
+                    <input type="text" id="task-skill" placeholder="e.g. summarize, sentiment" required>
+                </div>
+                <div class="form-group">
+                    <label for="task-input">Input</label>
+                    <textarea id="task-input" rows="4" placeholder="Enter text to process..." required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Execute</button>
+                    <span id="task-status" class="save-status"></span>
+                </div>
+            </form>
+            <div id="task-result" class="task-result" style="display:none;">
+                <h3>Result</h3>
+                <pre id="task-output"></pre>
             </div>
         </section>
 

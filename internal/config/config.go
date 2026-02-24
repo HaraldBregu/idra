@@ -12,10 +12,17 @@ import (
 	"idra/internal/platform"
 )
 
+// AgentConfig overrides for an individual agent (optional, for future use).
+type AgentConfig struct {
+	Name    string `json:"name"`
+	Enabled *bool  `json:"enabled,omitempty"` // nil = true (default enabled)
+}
+
 type Config struct {
-	Port       int    `json:"port"`
-	BearerToken string `json:"bearer_token"`
-	AutoOpen   bool   `json:"auto_open_browser"`
+	Port        int           `json:"port"`
+	BearerToken string        `json:"bearer_token"`
+	AutoOpen    bool          `json:"auto_open_browser"`
+	Agents      []AgentConfig `json:"agents,omitempty"`
 }
 
 func Default() Config {

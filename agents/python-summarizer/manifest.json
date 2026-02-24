@@ -1,0 +1,8 @@
+{
+  "name": "python-summarizer",
+  "description": "Extractive text summarizer (Python)",
+  "skills": ["summarize"],
+  "command": "python",
+  "args": ["agent.py"],
+  "dir": "agents/python-summarizer"
+}

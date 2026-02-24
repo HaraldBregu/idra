@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"idra/internal/agent"
 	"idra/internal/config"
 	"idra/web"
 )
@@ -26,7 +27,7 @@ type Server struct {
 	addr       string
 }
 
-func New(cfg config.Config) (*Server, error) {
+func New(cfg config.Config, mgr *agent.Manager) (*Server, error) {
 	mux := http.NewServeMux()
 
 	// Static files (embedded)
@@ -55,6 +56,19 @@ func New(cfg config.Config) (*Server, error) {
 	mux.HandleFunc("/api/v1/health", handleHealth)
 	mux.HandleFunc("/api/v1/config", authMiddleware(handleConfig))
 	mux.HandleFunc("/api/v1/status", authMiddleware(handleStatus))
+
+	// Agent API routes
+	if mgr != nil {
+		mux.HandleFunc("/api/v1/agents", authMiddleware(handleAgents(mgr)))
+		// Use a path-based router: /api/v1/agents/{name} and /api/v1/agents/{name}/tasks
+		mux.HandleFunc("/api/v1/agents/", authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasSuffix(r.URL.Path, "/tasks") {
+				handleAgentTasks(mgr)(w, r)
+			} else {
+				handleAgent(mgr)(w, r)
+			}
+		}))
+	}
 
 	addr, err := resolveAddr(cfg.Port)
 	if err != nil {

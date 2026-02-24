@@ -6,9 +6,11 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
+	"idra/internal/agent"
 	"idra/internal/config"
 	"idra/internal/platform"
 	"idra/internal/server"
@@ -60,7 +62,19 @@ func runForeground() {
 
 	slog.Info("config loaded", "path", config.FilePath(), "port", cfg.Port)
 
-	srv, err := server.New(cfg)
+	// Discover agents
+	agentsDir := resolveAgentsDir()
+	var mgr *agent.Manager
+	if agentsDir != "" {
+		reg, err := agent.NewRegistry(agentsDir)
+		if err != nil {
+			slog.Error("failed to create agent registry", "error", err)
+			os.Exit(1)
+		}
+		mgr = agent.NewManager(reg)
+	}
+
+	srv, err := server.New(cfg, mgr)
 	if err != nil {
 		slog.Error("failed to create server", "error", err)
 		os.Exit(1)
@@ -69,6 +83,12 @@ func runForeground() {
 	// Graceful shutdown on SIGINT/SIGTERM
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
+
+	// Start agents
+	if mgr != nil {
+		mgr.StartAll(ctx)
+		agent.StartHealthLoop(ctx, mgr, 30*time.Second)
+	}
 
 	// Open browser
 	if cfg.AutoOpen {
@@ -93,6 +113,12 @@ func runForeground() {
 	select {
 	case <-ctx.Done():
 		slog.Info("shutting down...")
+
+		// Stop agents first
+		if mgr != nil {
+			mgr.StopAll()
+		}
+
 		shutCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := srv.Shutdown(shutCtx); err != nil {
@@ -101,11 +127,41 @@ func runForeground() {
 	case err := <-errCh:
 		if err != nil {
 			slog.Error("server error", "error", err)
+			if mgr != nil {
+				mgr.StopAll()
+			}
 			os.Exit(1)
 		}
 	}
 
 	slog.Info("stopped")
+}
+
+// resolveAgentsDir finds the agents/ directory. Checks next to the executable
+// first (production), then the current working directory (development).
+func resolveAgentsDir() string {
+	// Next to executable
+	exe, err := os.Executable()
+	if err == nil {
+		dir := filepath.Join(filepath.Dir(exe), "agents")
+		if info, err := os.Stat(dir); err == nil && info.IsDir() {
+			slog.Info("agents directory found (next to binary)", "dir", dir)
+			return dir
+		}
+	}
+
+	// Current working directory
+	cwd, err := os.Getwd()
+	if err == nil {
+		dir := filepath.Join(cwd, "agents")
+		if info, err := os.Stat(dir); err == nil && info.IsDir() {
+			slog.Info("agents directory found (cwd)", "dir", dir)
+			return dir
+		}
+	}
+
+	slog.Info("no agents directory found")
+	return ""
 }
 
 func serviceCmd(action string) {
@@ -143,7 +199,7 @@ func serviceCmd(action string) {
 }
 
 func printUsage() {
-	fmt.Println(`Idra — Background service with web UI
+	fmt.Println(`Idra — AI Agent Fleet Orchestrator
 
 Usage:
   idra run                    Run in foreground (dev mode)

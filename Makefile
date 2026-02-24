@@ -3,7 +3,7 @@ LDFLAGS := -s -w -X main.version=$(VERSION)
 BINARY  := idra
 GOFLAGS := CGO_ENABLED=0
 
-.PHONY: build dev clean cross test
+.PHONY: build dev clean cross test proto agents-deps
 
 ## build: compile for the current platform
 build:
@@ -33,6 +33,17 @@ cross:
 	GOOS=windows GOARCH=arm64 $(GOFLAGS) go build -ldflags "$(LDFLAGS)" -o dist/$(BINARY)-windows-arm64.exe ./cmd/idra
 	@echo "Built binaries in dist/"
 	@ls -lh dist/
+
+## proto: regenerate protobuf stubs (requires protoc + plugins)
+proto:
+	protoc --go_out=. --go_opt=paths=source_relative \
+	       --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+	       proto/agent.proto
+
+## agents-deps: install Python and Node agent dependencies
+agents-deps:
+	cd agents/python-summarizer && pip install -r requirements.txt
+	cd agents/ts-sentiment && npm install
 
 ## help: show this help
 help:
