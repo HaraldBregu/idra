@@ -3,7 +3,23 @@
     "allow": [
       "Bash(cd:*)",
       "Bash(which go:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(cmd.exe:*)",
+      "Bash(echo:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(grep:*)",
+      "Bash(reg.exe query:*)",
+      "Bash(choco install:*)",
+      "Bash(curl:*)",
+      "Bash(ls:*)",
+      "Bash(export:*)",
+      "Bash(export PATH=\"/c/Users/BRGHLD87H/local/go/bin:$PATH\" && export GOPATH=\"/c/Users/BRGHLD87H/go\" && cd /c/Users/BRGHLD87H/Documents/idra && go mod tidy 2>&1)",
+      "Bash(export PATH=\"/c/Users/BRGHLD87H/local/go/bin:$PATH\" && export GOPATH=\"/c/Users/BRGHLD87H/go\" && cd /c/Users/BRGHLD87H/Documents/idra && rm go.sum && go mod tidy 2>&1)",
+      "Bash(export PATH=\"/c/Users/BRGHLD87H/local/go/bin:$PATH\" && export GOPATH=\"/c/Users/BRGHLD87H/go\" && cd /c/Users/BRGHLD87H/Documents/idra && go build ./... 2>&1)",
+      "Bash(tail:*)",
+      "Bash(true:*)",
+      "Bash(export PATH=\"/c/Users/BRGHLD87H/local/go/bin:$PATH\" && export GOPATH=\"/c/Users/BRGHLD87H/go\" && cd /c/Users/BRGHLD87H/Documents/idra && go vet ./... 2>&1)",
+      "Bash(cd /c/Users/BRGHLD87H/Documents/idra && git push origin master 2>&1)"
     ]
   },
   "hooks": {
