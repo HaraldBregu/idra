@@ -1,5 +1,7 @@
 # Idra
 
+![Idra](./resources/hydra.png)
+
 A cross-platform background service that runs a fleet of AI Agents, managed through a localhost web UI.
 
 Idra installs with a single command, runs isolated as an OS service, and exposes a local dashboard for configuring and orchestrating your AI agents — no cloud dependency, no exposed ports, everything stays on your machine.
