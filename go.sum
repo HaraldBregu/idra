@@ -1,0 +1,4 @@
+github.com/kardianos/service v1.2.2 h1:ZvePhAHfvo0A7Mftk/tEzqEZ7Q4aLCYkh1X159pkCas=
+github.com/kardianos/service v1.2.2/go.mod h1:CIMQ7ojlb6SgZBOpCE/mxSxSbHdMmGsyi6u2o/RUFSY=
+golang.org/x/sys v0.29.0 h1:TPYlXGxvx1MGTn2GiZDhg/7ae9TqhMIod/MKIQ+SiSo=
+golang.org/x/sys v0.29.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=

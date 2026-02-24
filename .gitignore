@@ -1,0 +1,5 @@
+idra
+idra.exe
+dist/
+*.tmp
+.DS_Store
